@@ -10,6 +10,7 @@ import pathlib
 class RequestHandler(http.server.CGIHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         self._form = None
+        self._target_dir = pathlib.Path.cwd().joinpath('.files')
         super(RequestHandler, self).__init__(*args, **kwargs)
 
     def handle_rename(self):
@@ -25,9 +26,21 @@ class RequestHandler(http.server.CGIHTTPRequestHandler):
         print("add request received")
 
         fileitem = self._form['file']
+        relative_path = self._form.getvalue('relative_path')
+        relative_path = pathlib.Path(relative_path.decode('utf-8'))
+
+        print("fileitem", fileitem)
+        print("relative_path", relative_path)
+        print("relative_path.parent", relative_path.parent)
+
         if fileitem.filename:
-            target_path = pathlib.Path.cwd().joinpath('.files').joinpath(fileitem.filename)
-            open(target_path.absolute(), 'wb').write(fileitem.file.read())
+            print("filename", fileitem.filename)
+
+            # TODO: Handle more levels of nesting dirs
+            target_path = self._target_dir.joinpath(relative_path.parent)
+            pathlib.Path(target_path).mkdir(parents=True, exist_ok=True)
+
+            open(target_path.joinpath(fileitem.filename).absolute(), 'wb').write(fileitem.file.read())
             print('The file "' + target_path.name + '" was uploaded successfully')
         else:
             print("No file was uploaded")
