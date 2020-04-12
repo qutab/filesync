@@ -1,12 +1,16 @@
 import requests
 from urllib.parse import urljoin
 import pathlib
+from shared import argparser
+
 
 class Request:
     def __init__(self, host="localhost", port=9999):
         self._url = "http://{host}:{port}".format(host=host, port=port)
         self._response = requests.Response()
-        self._target_dir = pathlib.Path.cwd().joinpath('.files')
+
+        parser = argparser.Parser()
+        self._target_dir = parser.get_target_path()
 
     def send_file(self, filename, action='add'):
         abs_path = self._target_dir.joinpath(filename)
@@ -26,10 +30,12 @@ def main():
     print("sending request")
 
     req = Request()
-    #req.send_file(".files/test0.txt")
-    #req.send_file(".files/test1.txt")
-    #req.send_file(".files/test2.txt")
-    req.send_file("folder0/nested file.txt")
+    req.send_file("test0.txt")
+    req.send_file("test1.txt")
+    req.send_file("folder0/nested file0.txt")
+    req.send_file("folder1/nested folder/double nested file0.txt")
+    req.send_file("folder1/nested file1.txt")
+
 
 if __name__ == '__main__':
     main()
