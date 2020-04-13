@@ -24,7 +24,13 @@ class RequestHandler(http.server.CGIHTTPRequestHandler):
         print("delete request received")
 
     def handle_add(self):
-        fileitem = self._form['file']
+        if self._form:
+            fileitem = self._form['file']
+        else:
+            # TODO: Handle syncing of empty folders
+            print("Failed to add file/folder. Empty folders are not synced currently.")
+            return
+
         relative_path = self._form.getvalue('relative_path')
         relative_path = pathlib.Path(relative_path.decode('utf-8'))
 
@@ -80,7 +86,7 @@ class RequestHandler(http.server.CGIHTTPRequestHandler):
             self.parse_post()
         except RuntimeError:
             print("Unsupported form data received from client")
-            self.on_failure(403)
+            self.on_failure(code=403)
 
         if self.parse_path():
             self.on_success()
