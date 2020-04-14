@@ -10,7 +10,10 @@ class RequestHandler(http.server.CGIHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         self._form = None
         parser = argparser.Parser()
-        self._target_dir = parser.get_target_path()
+        self._target_dir = pathlib.Path(parser.target_path())
+
+        if not self._target_dir.exists() or not self._target_dir.is_dir():
+            raise NotADirectoryError
 
         super(RequestHandler, self).__init__(*args, **kwargs)
 
@@ -32,13 +35,14 @@ class RequestHandler(http.server.CGIHTTPRequestHandler):
             return
 
         relative_path = self._form.getvalue('relative_path')
-        relative_path = pathlib.Path(relative_path.decode('utf-8'))
+        relative_path = pathlib.Path(relative_path)
 
         if fileitem.filename:
             target_path = self._target_dir.joinpath(relative_path.parent)
             pathlib.Path(target_path).mkdir(parents=True, exist_ok=True)
 
             open(target_path.joinpath(fileitem.filename).absolute(), 'wb').write(fileitem.file.read())
+            print(f"file {fileitem.filename} saved successfully!")
         else:
             print("No file was uploaded")
 
@@ -87,9 +91,9 @@ class RequestHandler(http.server.CGIHTTPRequestHandler):
         except RuntimeError:
             print("Unsupported form data received from client")
             self.on_failure(code=403)
-
-        if self.parse_path():
-            self.on_success()
+        else:
+            if self.parse_path():
+                self.on_success()
 
     def on_success(self):
         self.send_response(200)

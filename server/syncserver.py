@@ -17,6 +17,8 @@ class SyncServer(ABC):
 
 
 class HttpServer(SyncServer):
+    server_version = 'HttpServer/1.1'
+
     def __init__(self, host="localhost", port=9999):
         self._host = host
         self._port = port

@@ -14,8 +14,14 @@ class Parser:
     def __init__(self):
         self._parser = argparse.ArgumentParser(description='file sync client')
         self._parser.add_argument('--path', type=dir_path)
+        self._parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
+
         self._args = self._parser.parse_args()
 
-    def get_target_path(self):
+    @property
+    def target_path(self):
         return self._args.path
 
+    @property
+    def verbose(self):
+        return self._args.verbose
