@@ -15,6 +15,7 @@ class Parser:
         self._parser = argparse.ArgumentParser(description='file sync client')
         self._parser.add_argument('--path', type=dir_path)
         self._parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
+        self._parser.add_argument("-c", "--compress", help="use compression", action="store_true")
 
         self._args = self._parser.parse_args()
 
@@ -25,3 +26,7 @@ class Parser:
     @property
     def verbose(self):
         return self._args.verbose
+
+    @property
+    def compressed(self):
+        return self._args.compress

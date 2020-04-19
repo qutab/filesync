@@ -1,9 +1,12 @@
 import asyncio
 import logging
+import zlib
 from pathlib import Path
 from urllib.parse import urljoin
 
 from aiohttp import ClientSession, client_exceptions
+
+from shared import argparser
 
 
 class RequestDispatcher:
@@ -23,16 +26,21 @@ class RequestDispatcher:
 
 
 class Request:
-    def __init__(self, host: str="localhost", port: int=9999, target_dir: Path=Path.cwd()):
+    def __init__(self, host: str = "localhost", port: int = 9999, target_dir: Path = Path.cwd()):
         self._url = "http://{host}:{port}".format(host=host, port=port)
         self._response = None
         self._target_dir = target_dir
+        self._compressed = argparser.Parser().compressed
 
     async def post_to_server(self, relative_path: str, action: str, args: str):
         fullname = self._target_dir.joinpath(relative_path)
         data = {'relative_path': relative_path}
+
         if fullname.exists() and fullname.is_file():
-            data['file'] = open(str(fullname), 'rb')
+            if self._compressed:
+                data['file'] = zlib.compress(open(str(fullname), 'rb').read())
+            else:
+                data['file'] = open(str(fullname), 'rb')
 
         try:
             async with ClientSession() as session:

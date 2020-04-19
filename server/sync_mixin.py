@@ -1,6 +1,7 @@
 import logging
 from pathlib import Path
 from shared import argparser
+import zlib
 
 
 class SyncMixin(object):
@@ -12,6 +13,7 @@ class SyncMixin(object):
         self._target_dir = argparser.Parser().target_path
         if not self._target_dir.exists() or not self._target_dir.is_dir():
             raise NotADirectoryError
+        self._compressed = argparser.Parser().compressed
 
         super(SyncMixin, self).__init__(*args, **kwargs)
 
@@ -33,14 +35,19 @@ class SyncMixin(object):
         form_file = self.post_form['file']
         relative_path = Path(self.post_form.getvalue('relative_path'))
 
-        if form_file.filename:
+        if form_file.file and relative_path:
             # Ensure file directory exists
-            file_dir = self._target_dir.joinpath(relative_path.parent)
-            Path(file_dir).mkdir(parents=True, exist_ok=True)
+            full_path = self._target_dir.joinpath(relative_path).absolute()
+            Path(full_path.parent).mkdir(parents=True, exist_ok=True)
 
             # Write file contents
-            open(file_dir.joinpath(form_file.filename).absolute(), 'wb').write(form_file.file.read())
-            logging.debug(f"File {form_file.filename} saved successfully!")
+            if self._compressed:
+                contents = zlib.decompress(form_file.file.read())
+            else:
+                contents = form_file.file.read()
+
+            open(full_path, 'wb').write(contents)
+            logging.debug(f"File {full_path} saved successfully!")
         else:
             logging.error("Failed to add file/folder.")
 
