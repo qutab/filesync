@@ -1,0 +1,9 @@
+Known caveats:
+- Server must start before client because server is not able to report its contents
+- Empty directories may be left out on server due to this
+- Always hashes are used to compute file diffs, timestamps could suffice in most cases. Also this could be better abstracted
+- Empty folders are not synced
+- Updates are just new file transfers instead of an rsync like algorithm
+- Persistent ClientSession could be used in client but I don't know how to do it
+- Asyncio could be used on server side when handling multiple requests
+- Only tested on local machine
