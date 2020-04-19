@@ -1,7 +1,10 @@
-import syncserver as ss
-
+import logging
 import signal
 import sys
+
+import syncserver as ss
+
+from shared import argparser
 
 
 def signal_handler(server):
@@ -11,6 +14,11 @@ def signal_handler(server):
 
 
 def main():
+    # parse args
+    parser = argparser.Parser()
+    logging.basicConfig(format='<%(levelname)s>: %(message)s |%(filename)s:%(lineno)d|%(threadName)s',
+                        level=logging.DEBUG if parser.verbose else logging.INFO)
+
     server = ss.HttpServer()
     signal.signal(signal.SIGINT, lambda signum, frame: signal_handler(server))
     server.start()

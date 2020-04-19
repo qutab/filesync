@@ -1,3 +1,4 @@
+import logging
 import socketserver
 from abc import ABC, abstractmethod
 
@@ -25,9 +26,9 @@ class HttpServer(SyncServer):
         self._server = socketserver.TCPServer((self._host, self._port), rh.RequestHandler)
 
     def start(self):
-        print("Starting HTTP server...")
+        logging.info("Starting HTTP server...")
         self._server.serve_forever()
 
     def stop(self):
-        print("Stopping HTTP server...")
+        logging.info("Stopping HTTP server...")
         self._server.shutdown()

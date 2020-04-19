@@ -21,7 +21,6 @@ async def do_upload(dispatcher, dir_monitor):
     while True:
         contents = await dir_monitor.get_fs_contents()
         commands = get_commands(*contents)
-        logging.debug(f"Commands: {commands}")
 
         await dispatcher.dispatch(commands)
         await asyncio.sleep(2)
@@ -31,7 +30,7 @@ async def main():
     # parse args
     parser = argparser.Parser()
     target_dir = parser.target_path
-    logging.basicConfig(format='<%(levelname)s>: %(message)s',
+    logging.basicConfig(format='<%(levelname)s>: %(message)s |%(filename)s:%(lineno)d|%(threadName)s',
                         level=logging.DEBUG if parser.verbose else logging.INFO)
 
     dir_monitor = DirMonitor(target_dir)

@@ -3,8 +3,6 @@ import os
 import pathlib
 import logging
 
-import bidict
-
 
 class DirMonitor:
     """
@@ -14,8 +12,8 @@ class DirMonitor:
 
     def __init__(self, target_path: pathlib.Path = pathlib.Path.cwd()):
         self._path = pathlib.Path(target_path)
-        self._fsitems_prev = bidict.bidict()
-        self._fsitems_curr = bidict.bidict()
+        self._fsitems_prev = {}
+        self._fsitems_curr = {}
 
     async def scan_fs_contents(self):
         """
@@ -54,9 +52,9 @@ class DirMonitor:
             fsitem = pathlib.Path(dirname).joinpath(pathlib.Path(filename))
             assert fsitem.is_file()
 
-            # Name of the file also changes the checksum
+            # Full path of the file also changes the checksum
             # This ensures that files with same contents have different checksums
-            checksum.update(str(filename).encode())
+            checksum.update(str(fsitem.as_posix()).encode())
 
             with open(fsitem, 'rb') as fh:
                 while True:
@@ -66,4 +64,7 @@ class DirMonitor:
                     checksum.update(buf)
 
             rel_path = fsitem.relative_to(self._path.as_posix())
-            self._fsitems_curr[rel_path.as_posix()] = checksum.hexdigest()
+            try:
+                self._fsitems_curr[rel_path.as_posix()] = checksum.hexdigest()
+            except Exception as exc:
+                logging.error(f"Unhandled exception {exc}. Program may be in an unexpected state.")
