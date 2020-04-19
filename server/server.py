@@ -2,7 +2,7 @@ import logging
 import signal
 import sys
 
-import syncserver as ss
+import sync_server as ss
 
 from shared import argparser
 

@@ -2,7 +2,7 @@ import asyncio
 import unittest
 from unittest import mock
 
-from client.dirmonitor import *
+from client.dir_monitor import *
 
 
 class TestDirMonitor(unittest.TestCase):

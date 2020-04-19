@@ -2,7 +2,7 @@ import asyncio
 import logging
 
 from command_generator import get_commands
-from dirmonitor import DirMonitor
+from dir_monitor import DirMonitor
 from request_dispatcher import RequestDispatcher
 from shared import argparser
 
