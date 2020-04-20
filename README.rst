@@ -2,9 +2,9 @@
 Dependencies
 ************
 
-Python 3.7+
-aiohttp
-zlib
+- Python 3.7+
+- aiohttp
+- zlib
 
 
 ****************
@@ -17,28 +17,30 @@ Usage
 ******
 
 **Server**
+
 (venv) \path\to\filesync>python -m server.server --help
-usage: server.py [-h] [-p PATH] [-v] [-c]
+    usage: server.py [-h] [-p PATH] [-v] [-c]
 
-file sync program
+    file sync program
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -p PATH, --path PATH  directory path to be synced
-  -v, --verbose         increase output verbosity
-  -c, --compress        use compression
+    optional arguments:
+      -h, --help            show this help message and exit
+      -p PATH, --path PATH  directory path to be synced
+      -v, --verbose         increase output verbosity
+      -c, --compress        use compression
 
 **Client**
+
 (venv) \path\to\filesync>python -m client.client --help
-usage: client.py [-h] [-p PATH] [-v] [-c]
+    usage: client.py [-h] [-p PATH] [-v] [-c]
 
-file sync program
+    file sync program
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -p PATH, --path PATH  directory path to be synced
-  -v, --verbose         increase output verbosity
-  -c, --compress        use compression
+    optional arguments:
+      -h, --help            show this help message and exit
+      -p PATH, --path PATH  directory path to be synced
+      -v, --verbose         increase output verbosity
+      -c, --compress        use compression
 
 
 **************
