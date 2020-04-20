@@ -9,7 +9,7 @@ from server.sync_mixin import SyncMixin
 class RequestHandler(SyncMixin, ParseMixin, ExecutorMixin, http.server.CGIHTTPRequestHandler):
     """
     This is the main class responsible for handling incoming client requests
-    It uses the different mixin class to sync contents on server filesystem
+    It uses different mixin classes to sync contents on server filesystem
     """
 
     def __init__(self, *args, **kwargs):
