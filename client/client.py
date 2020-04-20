@@ -1,9 +1,9 @@
 import asyncio
 import logging
 
-from command_generator import get_commands
-from dir_monitor import DirMonitor
-from request_dispatcher import RequestDispatcher
+from client.command_generator import get_commands
+from client.dir_monitor import DirMonitor
+from client.request_dispatcher import RequestDispatcher
 from shared import argparser
 
 
@@ -26,7 +26,12 @@ async def do_upload(dispatcher, dir_monitor):
         await asyncio.sleep(2)
 
 
-async def main():
+async def main(target_dir, dir_monitor, dispatcher):
+    # schedule periodic scans and uploads
+    await asyncio.gather(do_scan(target_dir, dir_monitor), do_upload(dispatcher, dir_monitor))
+
+
+def do_setup():
     # parse args
     parser = argparser.Parser()
     target_dir = parser.target_path
@@ -36,12 +41,16 @@ async def main():
     dir_monitor = DirMonitor(target_dir)
     dispatcher = RequestDispatcher(target_dir=target_dir)
 
-    # schedule periodic scans and uploads
-    await asyncio.gather(do_scan(target_dir, dir_monitor), do_upload(dispatcher, dir_monitor))
+    return target_dir, dir_monitor, dispatcher
 
 
 if __name__ == '__main__':
     import sys
 
     print(sys.version)
-    asyncio.run(main())
+    assert sys.version_info.major == 3 and sys.version_info.minor >= 7
+
+    try:
+        asyncio.run(main(*do_setup()))
+    except (asyncio.CancelledError, KeyboardInterrupt):
+        logging.info(f"Client tasks cancelled")

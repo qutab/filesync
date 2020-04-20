@@ -1,9 +1,9 @@
 import http.server
 import logging
 
-from executor_mixin import ExecutorMixin
-from parse_mixin import ParseMixin
-from sync_mixin import SyncMixin
+from server.executor_mixin import ExecutorMixin
+from server.parse_mixin import ParseMixin
+from server.sync_mixin import SyncMixin
 
 
 class RequestHandler(SyncMixin, ParseMixin, ExecutorMixin, http.server.CGIHTTPRequestHandler):

@@ -10,10 +10,17 @@ from shared import argparser
 
 
 class RequestDispatcher:
+    """
+    Creates requests from commands which will be sent to the server
+    """
+
     def __init__(self, **kwargs):
         self._request = Request(**kwargs)
 
     async def dispatch(self, commands: dict):
+        """
+        Dispatch requests to server asynchronously for each command
+        """
         logging.debug(f"Commands to be dispatched {commands}")
 
         requests = [
@@ -26,6 +33,10 @@ class RequestDispatcher:
 
 
 class Request:
+    """
+    Helper class to post requests to server
+    """
+
     def __init__(self, host: str = "localhost", port: int = 9999, target_dir: Path = Path.cwd()):
         self._url = "http://{host}:{port}".format(host=host, port=port)
         self._response = None
@@ -33,6 +44,9 @@ class Request:
         self._compressed = argparser.Parser().compressed
 
     async def post_to_server(self, relative_path: str, action: str, args: str):
+        """
+        Send a single post requests to server
+        """
         fullname = self._target_dir.joinpath(relative_path)
         data = {'relative_path': relative_path}
 
@@ -52,3 +66,7 @@ class Request:
                     return resp.status
         except client_exceptions.ClientConnectorError as exc:
             logging.error(exc)
+        except client_exceptions.ServerDisconnectedError:
+            logging.error("Server must be started first")
+            for task in asyncio.Task.all_tasks():
+                task.cancel()

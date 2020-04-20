@@ -2,7 +2,7 @@ import logging
 import socketserver
 from abc import ABC, abstractmethod
 
-import request_handler as rh
+from server import request_handler as rh
 
 
 class SyncServer(ABC):

@@ -1,16 +1,8 @@
 import logging
-import signal
-import sys
+import threading
 
-import sync_server as ss
-
+from server import sync_server as ss
 from shared import argparser
-
-
-def signal_handler(server):
-    print('SIGINT received')
-    server.stop()
-    sys.exit(0)
 
 
 def main():
@@ -20,8 +12,11 @@ def main():
                         level=logging.DEBUG if parser.verbose else logging.INFO)
 
     server = ss.HttpServer()
-    signal.signal(signal.SIGINT, lambda signum, frame: signal_handler(server))
-    server.start()
+    try:
+        server.start()
+    except KeyboardInterrupt:
+        logging.info("SIGINT received")
+        threading.Thread(target=lambda: server.stop(), daemon=True).start()
 
 
 if __name__ == '__main__':

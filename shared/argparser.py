@@ -12,8 +12,8 @@ def dir_path(string):
 
 class Parser:
     def __init__(self):
-        self._parser = argparse.ArgumentParser(description='file sync client')
-        self._parser.add_argument('--path', type=dir_path)
+        self._parser = argparse.ArgumentParser(description="file sync program")
+        self._parser.add_argument("-p", "--path", help="directory path to be synced", type=dir_path)
         self._parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
         self._parser.add_argument("-c", "--compress", help="use compression", action="store_true")
 

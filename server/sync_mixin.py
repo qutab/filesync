@@ -1,7 +1,8 @@
 import logging
-from pathlib import Path
-from shared import argparser
 import zlib
+from pathlib import Path
+
+from shared import argparser
 
 
 class SyncMixin(object):
